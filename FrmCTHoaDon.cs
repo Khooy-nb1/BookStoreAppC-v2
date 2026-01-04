@@ -1,5 +1,4 @@
-﻿using BookStoreApp;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -19,7 +18,7 @@ namespace BookStoreApp
             Load += FrmCTHoaDon_Load;
 
             btnHienThi.Click += (s, e) => LoadCT(_maHD);
-            btnTim.Click += (s, e) => LoadCT(txtTim.Text.Trim());
+            btnTim.Click += (s, e) => Search();
 
             btnThem.Click += btnThem_Click;
             btnSua.Click += btnSua_Click;
@@ -27,18 +26,15 @@ namespace BookStoreApp
 
             dgvCT.CellClick += dgvCT_CellClick;
 
-            if (txtThanhTien != null) txtThanhTien.ReadOnly = true;
-            if (txtTongTien != null) txtTongTien.ReadOnly = true;
+            txtMaHD.ReadOnly = true;
+            txtThanhTien.ReadOnly = true;
+            txtTongTien.ReadOnly = true;
         }
 
         private void FrmCTHoaDon_Load(object sender, EventArgs e)
         {
             SetupGrid();
-
-            // hiển thị mã HĐ
-           
-            if (Controls.ContainsKey("txtMaHD")) ((TextBox)Controls["txtMaHD"]).Text = _maHD;
-
+            txtMaHD.Text = _maHD;
             LoadCT(_maHD);
         }
 
@@ -55,22 +51,62 @@ namespace BookStoreApp
         {
             if (string.IsNullOrWhiteSpace(maHD))
             {
-                MessageBox.Show("Nhập mã HĐ để xem chi tiết!");
+                MessageBox.Show("Thiếu mã hóa đơn!");
                 return;
             }
 
             _dt = SqlHelper.Query(@"
-            SELECT MaHD AS [Mã HĐ], MaSach AS [Mã sách], SoLuong AS [Số lượng],
-                   DonGia AS [Đơn giá], ThanhTien AS [Thành tiền]
-            FROM CTHoaDon
-            WHERE MaHD = @MaHD
-            ORDER BY MaSach",
+                SELECT MaHD, MaSach, SoLuong, DonGia, ThanhTien
+                FROM CTHoaDon
+                WHERE MaHD = @MaHD
+                ORDER BY MaSach",
                 new SqlParameter("@MaHD", maHD));
 
             dgvCT.DataSource = _dt;
 
-            // cập nhật tổng tiền hiển thị
+            // Đổi HeaderText cho đẹp (NHƯNG vẫn giữ Name cột gốc để code không lỗi)
+            if (dgvCT.Columns["MaHD"] != null) dgvCT.Columns["MaHD"].HeaderText = "Mã HĐ";
+            if (dgvCT.Columns["MaSach"] != null) dgvCT.Columns["MaSach"].HeaderText = "Mã sách";
+            if (dgvCT.Columns["SoLuong"] != null) dgvCT.Columns["SoLuong"].HeaderText = "Số lượng";
+            if (dgvCT.Columns["DonGia"] != null) dgvCT.Columns["DonGia"].HeaderText = "Đơn giá";
+            if (dgvCT.Columns["ThanhTien"] != null) dgvCT.Columns["ThanhTien"].HeaderText = "Thành tiền";
+
             UpdateTongTien(maHD);
+        }
+
+        private void Search()
+        {
+            // style bạn đang làm: tìm theo textbox txtTim
+            string key = txtTim.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                LoadCT(_maHD);
+                return;
+            }
+
+            // Nếu nhập đúng mã HĐ thì load theo mã đó, còn không thì filter theo mã sách
+            if (key.StartsWith("HD", StringComparison.OrdinalIgnoreCase) || key.Length >= 3)
+            {
+                // lọc trong hóa đơn hiện tại theo mã sách
+                _dt = SqlHelper.Query(@"
+                    SELECT MaHD, MaSach, SoLuong, DonGia, ThanhTien
+                    FROM CTHoaDon
+                    WHERE MaHD = @MaHD AND (MaSach LIKE @k)
+                    ORDER BY MaSach",
+                    new SqlParameter("@MaHD", _maHD),
+                    new SqlParameter("@k", "%" + key + "%"));
+
+                dgvCT.DataSource = _dt;
+
+                if (dgvCT.Columns["MaHD"] != null) dgvCT.Columns["MaHD"].HeaderText = "Mã HĐ";
+                if (dgvCT.Columns["MaSach"] != null) dgvCT.Columns["MaSach"].HeaderText = "Mã sách";
+                if (dgvCT.Columns["SoLuong"] != null) dgvCT.Columns["SoLuong"].HeaderText = "Số lượng";
+                if (dgvCT.Columns["DonGia"] != null) dgvCT.Columns["DonGia"].HeaderText = "Đơn giá";
+                if (dgvCT.Columns["ThanhTien"] != null) dgvCT.Columns["ThanhTien"].HeaderText = "Thành tiền";
+
+                UpdateTongTien(_maHD);
+            }
         }
 
         private void dgvCT_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -78,12 +114,11 @@ namespace BookStoreApp
             if (e.RowIndex < 0) return;
             var row = dgvCT.Rows[e.RowIndex];
 
-            txtMaSach.Text = row.Cells["Mã sách"].Value?.ToString();
-            txtSoLuong.Text = row.Cells["Số lượng"].Value?.ToString();
-            txtDonGia.Text = row.Cells["Đơn giá"].Value?.ToString();
-
-            if (txtThanhTien != null)
-                txtThanhTien.Text = row.Cells["Thành tiền"].Value?.ToString();
+            txtMaHD.Text = row.Cells["MaHD"].Value?.ToString();
+            txtMaSach.Text = row.Cells["MaSach"].Value?.ToString();
+            txtSoLuong.Text = row.Cells["SoLuong"].Value?.ToString();
+            txtDonGia.Text = row.Cells["DonGia"].Value?.ToString();
+            txtThanhTien.Text = row.Cells["ThanhTien"].Value?.ToString();
         }
 
         private void btnThem_Click(object sender, EventArgs e)
@@ -108,30 +143,29 @@ namespace BookStoreApp
                 return;
             }
 
-            // check tồn kho
-            var ton = SqlHelper.Scalar("SELECT SoLuongTon FROM Sach WHERE MaSach=@ms",
+            // check trùng dòng
+            var existLine = SqlHelper.Scalar("SELECT COUNT(*) FROM CTHoaDon WHERE MaHD=@hd AND MaSach=@ms",
+                new SqlParameter("@hd", _maHD),
                 new SqlParameter("@ms", txtMaSach.Text.Trim()));
-            int tonKho = Convert.ToInt32(ton);
+            if (Convert.ToInt32(existLine) > 0)
+            {
+                MessageBox.Show("Sách này đã có trong hóa đơn! Hãy dùng Sửa.");
+                return;
+            }
+
+            // check tồn kho
+            int tonKho = Convert.ToInt32(SqlHelper.Scalar("SELECT SoLuongTon FROM Sach WHERE MaSach=@ms",
+                new SqlParameter("@ms", txtMaSach.Text.Trim())));
             if (sl > tonKho)
             {
                 MessageBox.Show($"Không đủ tồn kho! Tồn hiện tại: {tonKho}");
                 return;
             }
 
-            // check trùng dòng (MaHD, MaSach)
-            var existLine = SqlHelper.Scalar("SELECT COUNT(*) FROM CTHoaDon WHERE MaHD=@hd AND MaSach=@ms",
-                new SqlParameter("@hd", _maHD),
-                new SqlParameter("@ms", txtMaSach.Text.Trim()));
-            if (Convert.ToInt32(existLine) > 0)
-            {
-                MessageBox.Show("Sách này đã có trong hóa đơn! Hãy dùng Sửa để đổi số lượng/đơn giá.");
-                return;
-            }
-
-            // Insert chi tiết
+            // Insert
             SqlHelper.Execute(@"
-            INSERT INTO CTHoaDon(MaHD, MaSach, SoLuong, DonGia)
-            VALUES(@MaHD,@MaSach,@SoLuong,@DonGia)",
+                INSERT INTO CTHoaDon(MaHD, MaSach, SoLuong, DonGia)
+                VALUES(@MaHD,@MaSach,@SoLuong,@DonGia)",
                 new SqlParameter("@MaHD", _maHD),
                 new SqlParameter("@MaSach", txtMaSach.Text.Trim()),
                 new SqlParameter("@SoLuong", sl),
@@ -140,8 +174,8 @@ namespace BookStoreApp
 
             // trừ tồn kho
             SqlHelper.Execute(@"
-            UPDATE Sach SET SoLuongTon = SoLuongTon - @sl
-            WHERE MaSach=@ms",
+                UPDATE Sach SET SoLuongTon = SoLuongTon - @sl
+                WHERE MaSach=@ms",
                 new SqlParameter("@sl", sl),
                 new SqlParameter("@ms", txtMaSach.Text.Trim())
             );
@@ -152,33 +186,40 @@ namespace BookStoreApp
 
         private void btnSua_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtMaSach.Text))
+            {
+                MessageBox.Show("Chọn 1 dòng để sửa!");
+                return;
+            }
             if (!ValidateLine(out int newSL, out decimal newDG)) return;
 
-            // lấy dòng cũ để hoàn tồn kho rồi trừ lại theo số mới
-            var dtOld = SqlHelper.Query(@"
-            SELECT SoLuong, DonGia FROM CTHoaDon WHERE MaHD=@hd AND MaSach=@ms",
+            // lấy số lượng cũ
+            var oldObj = SqlHelper.Scalar(@"
+                SELECT SoLuong
+                FROM CTHoaDon
+                WHERE MaHD=@hd AND MaSach=@ms",
                 new SqlParameter("@hd", _maHD),
                 new SqlParameter("@ms", txtMaSach.Text.Trim()));
 
-            if (dtOld.Rows.Count == 0)
+            if (oldObj == null)
             {
                 MessageBox.Show("Không tìm thấy dòng chi tiết để sửa!");
                 return;
             }
 
-            int oldSL = Convert.ToInt32(dtOld.Rows[0]["SoLuong"]);
+            int oldSL = Convert.ToInt32(oldObj);
 
-            // hoàn tồn kho số cũ
+            // hoàn tồn kho cũ
             SqlHelper.Execute("UPDATE Sach SET SoLuongTon = SoLuongTon + @sl WHERE MaSach=@ms",
                 new SqlParameter("@sl", oldSL),
                 new SqlParameter("@ms", txtMaSach.Text.Trim()));
 
-            // check tồn kho đủ để trừ số mới
+            // check tồn kho đủ cho số mới
             int tonKho = Convert.ToInt32(SqlHelper.Scalar("SELECT SoLuongTon FROM Sach WHERE MaSach=@ms",
                 new SqlParameter("@ms", txtMaSach.Text.Trim())));
             if (newSL > tonKho)
             {
-                // rollback hoàn (trừ lại old để giữ đúng)
+                // rollback hoàn tồn kho
                 SqlHelper.Execute("UPDATE Sach SET SoLuongTon = SoLuongTon - @sl WHERE MaSach=@ms",
                     new SqlParameter("@sl", oldSL),
                     new SqlParameter("@ms", txtMaSach.Text.Trim()));
@@ -189,16 +230,16 @@ namespace BookStoreApp
 
             // update chi tiết
             SqlHelper.Execute(@"
-            UPDATE CTHoaDon
-            SET SoLuong=@sl, DonGia=@dg
-            WHERE MaHD=@hd AND MaSach=@ms",
+                UPDATE CTHoaDon
+                SET SoLuong=@sl, DonGia=@dg
+                WHERE MaHD=@hd AND MaSach=@ms",
                 new SqlParameter("@sl", newSL),
                 new SqlParameter("@dg", newDG),
                 new SqlParameter("@hd", _maHD),
                 new SqlParameter("@ms", txtMaSach.Text.Trim())
             );
 
-            // trừ tồn kho theo số mới
+            // trừ tồn kho mới
             SqlHelper.Execute("UPDATE Sach SET SoLuongTon = SoLuongTon - @sl WHERE MaSach=@ms",
                 new SqlParameter("@sl", newSL),
                 new SqlParameter("@ms", txtMaSach.Text.Trim()));
@@ -217,8 +258,10 @@ namespace BookStoreApp
             if (MessageBox.Show("Xóa dòng chi tiết này?", "Xác nhận", MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return;
 
-            // lấy số lượng để hoàn tồn kho
-            var slObj = SqlHelper.Scalar("SELECT SoLuong FROM CTHoaDon WHERE MaHD=@hd AND MaSach=@ms",
+            object slObj = SqlHelper.Scalar(@"
+                SELECT SoLuong
+                FROM CTHoaDon
+                WHERE MaHD=@hd AND MaSach=@ms",
                 new SqlParameter("@hd", _maHD),
                 new SqlParameter("@ms", txtMaSach.Text.Trim()));
 
@@ -245,22 +288,23 @@ namespace BookStoreApp
 
         private void UpdateTongTien(string maHD)
         {
-            var sum = SqlHelper.Scalar("SELECT ISNULL(SUM(ThanhTien),0) FROM CTHoaDon WHERE MaHD=@hd",
+            object sumObj = SqlHelper.Scalar(
+                "SELECT ISNULL(SUM(ThanhTien),0) FROM CTHoaDon WHERE MaHD=@hd",
                 new SqlParameter("@hd", maHD));
 
-            decimal tong = Convert.ToDecimal(sum);
+            decimal tong = Convert.ToDecimal(sumObj);
 
-            // update vào bảng HoaDon
             SqlHelper.Execute("UPDATE HoaDon SET TongTien=@t WHERE MaHD=@hd",
                 new SqlParameter("@t", tong),
                 new SqlParameter("@hd", maHD));
 
-            if (txtTongTien != null) txtTongTien.Text = tong.ToString("0");
+            txtTongTien.Text = tong.ToString("0");
         }
 
         private bool ValidateLine(out int sl, out decimal donGia)
         {
-            sl = 0; donGia = 0;
+            sl = 0;
+            donGia = 0;
 
             if (string.IsNullOrWhiteSpace(txtMaSach.Text) ||
                 string.IsNullOrWhiteSpace(txtSoLuong.Text) ||
@@ -282,6 +326,8 @@ namespace BookStoreApp
                 return false;
             }
 
+            // tính thành tiền để hiển thị
+            txtThanhTien.Text = (sl * donGia).ToString("0");
             return true;
         }
 
@@ -290,7 +336,7 @@ namespace BookStoreApp
             txtMaSach.Clear();
             txtSoLuong.Clear();
             txtDonGia.Clear();
-            if (txtThanhTien != null) txtThanhTien.Clear();
+            txtThanhTien.Clear();
             txtMaSach.Focus();
         }
     }

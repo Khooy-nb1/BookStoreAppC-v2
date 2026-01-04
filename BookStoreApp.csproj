@@ -60,11 +60,29 @@
     <Compile Include="FrmCTPhieuNhap.Designer.cs">
       <DependentUpon>FrmCTPhieuNhap.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmGioHang.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmGioHang.Designer.cs">
+      <DependentUpon>FrmGioHang.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmHoaDon.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmHoaDon.Designer.cs">
       <DependentUpon>FrmHoaDon.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmKhachHang.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmKhachHang.Designer.cs">
+      <DependentUpon>FrmKhachHang.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmLichSuHoaDon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmLichSuHoaDon.Designer.cs">
+      <DependentUpon>FrmLichSuHoaDon.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmLogin.cs">
       <SubType>Form</SubType>
@@ -90,6 +108,12 @@
     <Compile Include="FrmPhieuNhap.Designer.cs">
       <DependentUpon>FrmPhieuNhap.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmQuenMatKhau.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmQuenMatKhau.Designer.cs">
+      <DependentUpon>FrmQuenMatKhau.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmSignup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,11 +132,29 @@
     <Compile Include="FrmSach.Designer.cs">
       <DependentUpon>FrmSach.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmThanhToan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmThanhToan.Designer.cs">
+      <DependentUpon>FrmThanhToan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmThanhToanQR.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmThanhToanQR.Designer.cs">
+      <DependentUpon>FrmThanhToanQR.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmTheLoai.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmTheLoai.Designer.cs">
       <DependentUpon>FrmTheLoai.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FrmThongKeTopBan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmThongKeTopBan.Designer.cs">
+      <DependentUpon>FrmThongKeTopBan.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -137,6 +179,9 @@
     <EmbeddedResource Include="FrmPhieuNhap.resx">
       <DependentUpon>FrmPhieuNhap.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FrmQuenMatKhau.resx">
+      <DependentUpon>FrmQuenMatKhau.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmSach.resx">
       <DependentUpon>FrmSach.cs</DependentUpon>
     </EmbeddedResource>
@@ -145,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTacGia.resx">
       <DependentUpon>FrmTacGia.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmThanhToanQR.resx">
+      <DependentUpon>FrmThanhToanQR.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTheLoai.resx">
       <DependentUpon>FrmTheLoai.cs</DependentUpon>

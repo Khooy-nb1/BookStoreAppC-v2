@@ -26,7 +26,7 @@ namespace BookStoreApp
 
             dgvTheLoai.CellClick += dgvTheLoai_CellClick;
 
-            btnTrangChu.Click += (s, e) => Close(); // hoặc mở FrmMenu
+            btnTrangChu.Click += (s, e) => Close(); 
         }
 
         private void FrmTheLoai_Load(object sender, EventArgs e)

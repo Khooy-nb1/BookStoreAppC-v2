@@ -48,5 +48,25 @@ namespace BookStoreApp
             // Đóng menu
             this.Close();
         }
+
+        private void btnBanSach_Click(object sender, EventArgs e)
+        {
+            new FrmGioHang(_username).ShowDialog();
+        }
+
+        private void btnKhachHang_Click(object sender, EventArgs e)
+        {
+            new FrmKhachHang().ShowDialog();
+        }
+
+        private void btnLichSu_Click(object sender, EventArgs e)
+        {
+            new FrmLichSuHoaDon().ShowDialog();
+        }
+
+        private void btnThongKe_Click(object sender, EventArgs e)
+        {
+            new FrmThongKeTopBan().ShowDialog();
+        }
     }
 }

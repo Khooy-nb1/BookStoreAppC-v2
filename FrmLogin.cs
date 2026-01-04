@@ -53,5 +53,10 @@ public partial class FrmLogin : Form
     {
         new FrmSignup().ShowDialog();
     }
-}
+
+        private void btnQuenMatKhau_Click(object sender, EventArgs e)
+        {
+            new FrmQuenMatKhau().ShowDialog();
+        }
+    }
 }

@@ -19,3 +19,5 @@ D:\C#\BookStoreApp\BookStoreApp\bin\Debug\BookStoreApp.pdb
 D:\C#\BookStoreApp\BookStoreApp\obj\Debug\BookStoreApp.exe
 D:\C#\BookStoreApp\BookStoreApp\obj\Debug\BookStoreApp.pdb
 D:\C#\BookStoreApp\BookStoreApp\obj\Debug\BookStoreApp.exe.config
+D:\C#\BookStoreApp\BookStoreApp\obj\Debug\BookStoreApp.FrmQuenMatKhau.resources
+D:\C#\BookStoreApp\BookStoreApp\obj\Debug\BookStoreApp.FrmThanhToanQR.resources

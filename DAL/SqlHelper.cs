@@ -10,6 +10,9 @@ namespace BookStoreApp
         public static string ConnStr =
             ConfigurationManager.ConnectionStrings["BookStoreDB"].ConnectionString;
 
+        
+        public static string ConnectionString => ConnStr;
+
         public static DataTable Query(string sql, params SqlParameter[] ps)
         {
             using (SqlConnection conn = new SqlConnection(ConnStr))

@@ -39,6 +39,10 @@
             this.btnThoat = new System.Windows.Forms.Button();
             this.lblUser = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnBanSach = new System.Windows.Forms.Button();
+            this.btnKhachHang = new System.Windows.Forms.Button();
+            this.btnLichSu = new System.Windows.Forms.Button();
+            this.btnThongKe = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnTacGia
@@ -140,6 +144,50 @@
             this.label1.TabIndex = 9;
             this.label1.Text = "Menu";
             // 
+            // btnBanSach
+            // 
+            this.btnBanSach.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnBanSach.Location = new System.Drawing.Point(32, 289);
+            this.btnBanSach.Name = "btnBanSach";
+            this.btnBanSach.Size = new System.Drawing.Size(93, 23);
+            this.btnBanSach.TabIndex = 10;
+            this.btnBanSach.Text = "Giỏ hàng";
+            this.btnBanSach.UseVisualStyleBackColor = false;
+            this.btnBanSach.Click += new System.EventHandler(this.btnBanSach_Click);
+            // 
+            // btnKhachHang
+            // 
+            this.btnKhachHang.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnKhachHang.Location = new System.Drawing.Point(32, 318);
+            this.btnKhachHang.Name = "btnKhachHang";
+            this.btnKhachHang.Size = new System.Drawing.Size(93, 23);
+            this.btnKhachHang.TabIndex = 11;
+            this.btnKhachHang.Text = "Khách hàng";
+            this.btnKhachHang.UseVisualStyleBackColor = false;
+            this.btnKhachHang.Click += new System.EventHandler(this.btnKhachHang_Click);
+            // 
+            // btnLichSu
+            // 
+            this.btnLichSu.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnLichSu.Location = new System.Drawing.Point(32, 347);
+            this.btnLichSu.Name = "btnLichSu";
+            this.btnLichSu.Size = new System.Drawing.Size(93, 23);
+            this.btnLichSu.TabIndex = 12;
+            this.btnLichSu.Text = "Lịch sử";
+            this.btnLichSu.UseVisualStyleBackColor = false;
+            this.btnLichSu.Click += new System.EventHandler(this.btnLichSu_Click);
+            // 
+            // btnThongKe
+            // 
+            this.btnThongKe.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.btnThongKe.Location = new System.Drawing.Point(32, 376);
+            this.btnThongKe.Name = "btnThongKe";
+            this.btnThongKe.Size = new System.Drawing.Size(93, 23);
+            this.btnThongKe.TabIndex = 13;
+            this.btnThongKe.Text = "Thống kê";
+            this.btnThongKe.UseVisualStyleBackColor = false;
+            this.btnThongKe.Click += new System.EventHandler(this.btnThongKe_Click);
+            // 
             // FrmMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -147,6 +195,10 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnThongKe);
+            this.Controls.Add(this.btnLichSu);
+            this.Controls.Add(this.btnKhachHang);
+            this.Controls.Add(this.btnBanSach);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lblUser);
             this.Controls.Add(this.btnThoat);
@@ -176,5 +228,9 @@
         private System.Windows.Forms.Button btnThoat;
         private System.Windows.Forms.Label lblUser;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnBanSach;
+        private System.Windows.Forms.Button btnKhachHang;
+        private System.Windows.Forms.Button btnLichSu;
+        private System.Windows.Forms.Button btnThongKe;
     }
 }
